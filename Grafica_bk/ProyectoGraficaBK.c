@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
+#include <string.h>//para trabajar con string de forma sencila
+#include <stdbool.h>//para trabjar con booleanos
+#include <time.h>   //para poder incluir la fecha
 
 #define MAX_CREWS 100
 /*
@@ -58,7 +59,7 @@ int totalCrewsSegundoArchivo=0;
 void leerSegundoArchivo(const char* nombreArchivo) {
     FILE* archivo = fopen(nombreArchivo, "r");
     if (!archivo) {
-        perror("No se puede abrir el primer archivo");
+        perror("El segundo archivo no se pudo abrir, recuerda que debe ir sin espacios y con el .csv incluido");
         return;
     }
 
@@ -143,12 +144,12 @@ void leerSegundoArchivo(const char* nombreArchivo) {
 
     fclose(archivo);
 
-    printf("Se cargaron %d crews correctamente.\n", totalCrewsPrimerArchivo);
+    //printf("Se cargaron %d crews \n", totalCrewsPrimerArchivo);
 }
 void leerPrimerArchivo(const char* nombreArchivo) {
     FILE* archivo = fopen(nombreArchivo, "r");
     if (!archivo) {
-        perror("No se pudo abrir el archivo");
+        perror("El primer archivo no se pudo abrir, recuerda que debe ir sin espacios y con el .csv incluido");
         return;
     }
 
@@ -232,7 +233,7 @@ void leerPrimerArchivo(const char* nombreArchivo) {
 
     fclose(archivo);
 
-    printf("Se cargaron %d crews correctamente.\n", totalCrewsSegundoArchivo);
+    //printf("Se cargaron %d \n", totalCrewsSegundoArchivo);
 }
 
 void imprimirCrews(int opcion) {
@@ -459,7 +460,7 @@ void verificacionGeneral(){
             }
             if(cambioServicio){
                 if(cambioAnterior){
-                    printf(", ademas es subido a nivel %d en servicio al invitado",crewsNuevo[indiceCrewCambio].servicioAlInvitado);
+                    printf(", igualmente es subido a nivel %d en servicio al invitado",crewsNuevo[indiceCrewCambio].servicioAlInvitado);
                 }else{
                     printf("%d",crewsNuevo[indiceCrewCambio].servicioAlInvitado);
                     printf(" en servicio al invitado");
@@ -468,7 +469,7 @@ void verificacionGeneral(){
             }
             if(cambioCanalesDigitales){
                 if(cambioAnterior){
-                    printf(", ademas es subido a nivel %d en canales digitales",crewsNuevo[indiceCrewCambio].canalesDigitales);
+                    printf(", por ultimo es subido a nivel %d en canales digitales",crewsNuevo[indiceCrewCambio].canalesDigitales);
                 }else{
                     printf("%d",crewsNuevo[indiceCrewCambio].canalesDigitales);
                     printf(" en canales digitales");
@@ -481,34 +482,46 @@ void verificacionGeneral(){
         
     }
 }
-
+void redaccionCorreo(){
+    time_t fecha = time(NULL);
+    struct tm date = *localtime(&fecha);
+    printf("Junto son saludar, hago envió de la grafica semanal de eficiencia correspondiente a ");
+    printf("%02d/%02d/%d.",date.tm_mday,date.tm_mon+1,date.tm_year+1900);
+    printf(" En esta se encuentran presente los siguientes cambios:\n");
+    //las siguientes 3 lineas es el contendio del correo que funciona perfectamente
+    verificarEliminados();
+    veroficarAgregados();
+    verificacionGeneral();
+    printf("Estos fueron los cambios  en la grafica de esta semena, seguiremos trabajando en el entrenamiento de los crews. \n");
+    printf("Buena semana\n");
+}
 
 
 int main() {
     char nombrePrimerArchivo[100];
     char nombreSegundoArchivo[100];
 
-     int opcion;
-    printf("primer archivo a abrir(copia y pega con el .csv): ");
+    printf("Debes ingresar primero el archivo antiguo\n");
+    printf("primer archivo a abrir(copia y pega con el .csv, debe estar sin espacios): ");
     scanf("%99s", nombrePrimerArchivo);
-     printf("segundo archivo a abrir(copia y pega con el .csv): ");
+    printf("Debes ingresar ahora el archivo nuevo\n");
+     printf("segundo archivo a abrir(copia y pega con el .csv, debe estar sin espacios): ");
     scanf("%99s", nombreSegundoArchivo);
     
-
     leerPrimerArchivo(nombrePrimerArchivo);
-
-    leerSegundoArchivo(nombreSegundoArchivo);
-
-    //printf("que planilla quieres imprimir 1 o 2\n");
-    //printf("para cerrar ingresa 3\n");
-   // scanf("%d",&opcion);
+    leerSegundoArchivo(nombreSegundoArchivo);   
+    //si quieres ver o comprobar que los crews hayan sido agregados de forma correcta descomenta lo de abajo
+    /*
    imprimirCrews(1);
     printf("_-_-_-_-FIN IMPRESION PRIMER ARCHIVO_-_-_-_-_-\n\n\n\n\n");
     printf("_-_-_-_-SEGUNDA IMPRESION DEL SEGUNDO ARCHIVO_-_-_-_-_-_-\n\n");
     imprimirCrews(2);
-    verificarEliminados();
-    veroficarAgregados();
-    verificacionGeneral();
+    */
 
+   
+    printf("\n\n\n");
+    printf("-_-_-_-_-_CORREO REDACTADO ABAJO-_-_-_-_-_\n");
+    printf("\n\n\n");
+    redaccionCorreo();
     return 0;
 }
